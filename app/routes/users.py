@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.models import User
+from app.models import Usuario
 from app.auth import token_required
 from app import db
 
@@ -12,7 +12,7 @@ def create_user():
     data = request.get_json()
     if not data or not data.get('name'):
         return jsonify({"message": "Body incompleto! O campo name é obrigatório!"}), 400
-    new_user = User(name=data['name'], description=data.get('description', ''))
+    new_user = Usuario(name=data['name'], description=data.get('description', ''))
     db.session.add(new_user)
     db.session.commit()
     return jsonify({
@@ -34,7 +34,7 @@ def get_users():
     if per_page > 100:
         per_page = 100
 
-    users_query = User.query.paginate(page=page, per_page=per_page, error_out=False)
+    users_query = Usuario.query.paginate(page=page, per_page=per_page, error_out=False)
     
     users = [{
         "id": user.id,
@@ -55,7 +55,7 @@ def get_users():
 @users_bp.route('/users/<int:user_id>', methods=['GET'])
 @token_required
 def get_user(user_id):
-    user = User.query.get(user_id)
+    user = Usuario.query.get(user_id)
     if not user:
         return jsonify({'message': 'Usuário não encontrado!'}), 404
     return jsonify({
@@ -69,7 +69,7 @@ def get_user(user_id):
 @token_required
 def update_user(user_id):
     data = request.get_json()
-    user = User.query.get(user_id)
+    user = Usuario.query.get(user_id)
     if not user:
         return jsonify({'message': 'Usuário não encontrado!'}), 404
     user.name = data.get('name', user.name)
@@ -89,7 +89,7 @@ def update_user(user_id):
 @users_bp.route('/users/<int:user_id>', methods=['DELETE'])
 @token_required
 def delete_user(user_id):
-    user = User.query.get(user_id)
+    user = Usuario.query.get(user_id)
     if not user:
         return jsonify({'message': 'Usuário não encontrado!'}), 404
     db.session.delete(user)

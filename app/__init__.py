@@ -13,9 +13,5 @@ def create_app():
 
     from app.routes.users import users_bp
     app.register_blueprint(users_bp)
-    
-    @app.route('/test')
-    def test_route():
-        return jsonify({"message": "Test route is working!"})
 
     return app
