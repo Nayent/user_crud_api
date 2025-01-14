@@ -5,9 +5,6 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
-        
-        import ipdb
-        ipdb.set_trace()
 
         if 'token' in request.args:
             token = request.args['token']
