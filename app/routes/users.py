@@ -10,11 +10,13 @@ users_bp = Blueprint('users', __name__)
 @token_required
 def create_user():
     data = request.get_json()
+    if not data or not data.get('name'):
+        return jsonify({"message": "Body incompleto! O campo name é obrigatório!"}), 400
     new_user = User(name=data['name'], description=data.get('description', ''))
     db.session.add(new_user)
     db.session.commit()
     return jsonify({
-        "message": "User criado com sucesso!",
+        "message": "Usuário criado com sucesso!",
         "user": {
             "id": new_user.id,
             "name": new_user.name,
@@ -53,7 +55,9 @@ def get_users():
 @users_bp.route('/users/<int:user_id>', methods=['GET'])
 @token_required
 def get_user(user_id):
-    user = User.query.get_or_404(user_id)
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'message': 'Usuário não encontrado!'}), 404
     return jsonify({
         "id": user.id,
         "name": user.name,
@@ -65,14 +69,15 @@ def get_user(user_id):
 @token_required
 def update_user(user_id):
     data = request.get_json()
-    user = User.query.get_or_404(user_id)
-
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'message': 'Usuário não encontrado!'}), 404
     user.name = data.get('name', user.name)
     user.description = data.get('description', user.description)
 
     db.session.commit()
     return jsonify({
-        "message": "User atualizado com sucesso!",
+        "message": "Usuário atualizado com sucesso!",
         "user": {
             "id": user.id,
             "name": user.name,
@@ -84,7 +89,9 @@ def update_user(user_id):
 @users_bp.route('/users/<int:user_id>', methods=['DELETE'])
 @token_required
 def delete_user(user_id):
-    user = User.query.get_or_404(user_id)
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'message': 'Usuário não encontrado!'}), 404
     db.session.delete(user)
     db.session.commit()
-    return jsonify({"message": "User excluído com sucesso!"})
+    return jsonify({"message": "Usuário excluído com sucesso!"})
