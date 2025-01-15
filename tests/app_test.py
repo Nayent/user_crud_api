@@ -7,7 +7,7 @@ class TestApp(unittest.TestCase):
         self.app = create_app()
         self.app.config['TESTING'] = True
         self.app.config['WTF_CSRF_ENABLED'] = False
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
         self.client = self.app.test_client()
         self.token = 'TesteToken123'
 
